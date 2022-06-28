@@ -70,7 +70,8 @@ public class Vendor extends Account {
         ArrayList<Product> matches = new ArrayList<>();
         for (Product product : inventory.keySet()) {
             String categoryName = product.getCategory().getName();
-            if (categoryName.equals(category.getName())) {
+            int numberInStock = getNumberInStock(product);
+            if (categoryName.equals(category.getName()) && numberInStock != 0) {
                 matches.add(product);
             }
         }
@@ -81,7 +82,8 @@ public class Vendor extends Account {
         ArrayList<Product> matches = new ArrayList<>();
         for (Product product : inventory.keySet()) {
             String productName = product.getName();
-            if (productName.equalsIgnoreCase(name)) {
+            int numberInStock = getNumberInStock(product);
+            if (productName.equalsIgnoreCase(name) && numberInStock != 0) {
                 matches.add(product);
             }
         }

@@ -169,6 +169,17 @@ public class VendorTest {
     }
 
     @Test
+    @DisplayName("search by category test - product that matches category is in inventory, but not in stock")
+    public void searchByCategoryTest03() {
+        vendor.addProduct(product);
+        vendor.getInventory().put(product, 0); // simulates a purchase of product
+        int expected = 0;
+        ArrayList<Product> matches = vendor.searchByCategory(ProductCategory.ATHLETICS);
+        int actual = matches.size();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     @DisplayName("search by name when there is a match test")
     public void searchByNameTest01() {
         vendor.addProduct(product);
@@ -186,6 +197,17 @@ public class VendorTest {
         vendor.addProduct(product01);
         ArrayList<Product> matches = vendor.searchByName("Baseball");
         int expected = 0;
+        int actual = matches.size();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("search by name test - product that matches name is in inventory, but not in stock")
+    public void searchByNameTest03() {
+        vendor.addProduct(product);
+        vendor.getInventory().put(product, 0); // simulates a purchase of product
+        int expected = 0;
+        ArrayList<Product> matches = vendor.searchByName("Football");
         int actual = matches.size();
         Assertions.assertEquals(expected, actual);
     }

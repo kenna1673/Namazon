@@ -25,11 +25,11 @@ public class Display {
     private final String ENTER_LASTNAME = "Please enter your last name";
     private final String ENTER_EMAIL = "Please enter your email";
     private final String ENTER_PASSWORD = "PLease enter your password";
-
     private final String NO_VENDORS_MESSAGE = "Sorry there are currently no vendors!";
     private final String NO_PRODUCTS_MESSAGE = "There are currently no vendors with available products!";
     private final String GOODBYE_MESSAGE = "Have a good day!";
     private final String WELCOME_MESSAGE = "Welcome to Namazon!";
+    private final String INVALID_EMAIL = "You did not enter an available email. Please try again";
     public final int NO_VENDORS = -1;
     public final int LOGOUT = -2;
     private Scanner scanner;
@@ -75,9 +75,7 @@ public class Display {
                     }
                     customersChosenVendor = vendors.get(choice);
                     toPurchase = customerOptionsDisplay(customersChosenVendor);
-                    if (toPurchase == null) {
-                        print(GOODBYE_MESSAGE);
-                    } else {
+                    if (toPurchase != null) {
                         Address address = promptForAddressAfterSaleDisplay();
                         try {
                             customersChosenVendor.purchase(toPurchase, address);
@@ -122,6 +120,8 @@ public class Display {
                 createAccountAsCustomer();
                 break;
             case 0:
+                print("Have a good day!");
+                System.exit(0);
             default:
                 print(GOODBYE_MESSAGE);
                 flag = false;
@@ -156,7 +156,7 @@ public class Display {
                 currentAccount = vendor;
                 continueFlag = false;
             } catch (AccountCreationException ex) {
-                print("You did not enter an available email. Please try again");
+                print(INVALID_EMAIL);
                 print(LINE);
             }
         }
@@ -188,7 +188,7 @@ public class Display {
                 currentAccount = customer;
                 continueFlag = false;
             } catch (AccountCreationException | IOException ex) {
-                print("You did not enter an available email. Please try again");
+                print(INVALID_EMAIL);
             }
         }
         return customer;
@@ -213,9 +213,10 @@ public class Display {
                 account = namazon.signIn(email, password);
                 currentAccount = account;
                 continueFlag = false;
-                success = true;
             } catch (AccountAuthenticationException ex) {
-                print("You did not enter an existing account. Please try again.");
+                if (count < 2) {
+                    print("You did not enter an existing account. Please try again.");
+                }
                 count++;
                 print(LINE);
             }
@@ -231,6 +232,8 @@ public class Display {
     public Product customerOptionsDisplay(Vendor vendor) throws ProductNotAvailableException {
         Product newProduct = null;
         int choice = 0;
+        String brandName = vendor.getBrandName();
+        print(String.format("Choose how to search %s's products", brandName));
         print(LINE);
         print("""
             Press 0 to exit
@@ -264,7 +267,7 @@ public class Display {
                 Vendor current = vendors.get(i);
                 String name = current.getBrandName();
                 if (!current.getInventory().isEmpty()) {
-                    print(String.format("Press %d to shop %s's products\n", i, name));
+                    print(String.format("Press %d to shop %s's products", i, name));
                     numberOfAvailableVendors++;
                 }
             }
@@ -287,7 +290,7 @@ public class Display {
         return choice;
     }
 
-    public boolean vendorChoicesDisplay() throws VendorNotFoundException, IOException, ProductNotAvailableException {
+    public boolean vendorChoicesDisplay() {
         int choice = 0;
         boolean continueFlag = true;
         print(LINE);
@@ -349,6 +352,7 @@ public class Display {
         print(LINE);
         print("Please enter a name for your product");
         name = scanner.nextLine();
+        print("Select a category for your product");
         category = selectCategoryDisplay();
         print("Please enter a price for your product");
         price = scanner.nextDouble();
@@ -428,7 +432,7 @@ public class Display {
                     continueFlag = false;
                 }
             } else {
-                print("Sorry! There are no products from " + vendor.getBrandName() + " that match that category!");
+                print("Sorry! There are no products from " + vendor.getBrandName() + " that match that name!");
                 continueFlag = false;
             }
 
